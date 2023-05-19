@@ -1,6 +1,18 @@
 from django.contrib import admin
-from .models import Civilian
+from . import models
 
-@admin.register(Civilian)
+@admin.register(models.Civilian)
 class CivilianAdmin(admin.ModelAdmin):
     list_display = ['civId', 'fullName', 'imageProfileURL', 'detailsProfile']
+
+@admin.register(models.Charge)
+class ChargeAdmin(admin.ModelAdmin):
+    list_display = ['id', 'chargeName']
+
+@admin.register(models.Report)
+class ReportAdmin(admin.ModelAdmin):
+    list_display = ['repId', 'reportName', 'detailsReport', 'dateCreated']
+    
+@admin.register(models.Arrested)
+class ArrestedAdmin(admin.ModelAdmin):
+    list_display = ['repId', 'civId', 'isWarrant']

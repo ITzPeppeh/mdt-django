@@ -17,10 +17,18 @@ Including another URLconf
 
 from django.urls import path, include
 from django.contrib import admin
-#from api import urls as api_urls
+import os
+from django.views.static import serve
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+FLUTTER_WEB_APP = os.path.join(BASE_DIR, 'flutter_web_app')
+
+def flutter_redirect(request, resource):
+    return serve(request, resource, FLUTTER_WEB_APP)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    #path('api-auth/', include('rest_framework.urls')),
-    path('api/', include('api.urls'))
+    path('api/', include('api.urls')),
+    path('', lambda r: flutter_redirect(r, 'index.html')),
+    path('<path:resource>', flutter_redirect),
 ]

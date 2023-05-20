@@ -1,11 +1,11 @@
-#mdt-django
+# mdt-django
 
 Depends on folder mdt-flutter:
     Run this commands in project folder:
     `flutter clean`
     `flutter pub get`
 
-#Open 2 terminals:
+# Open 2 terminals:
     1:
         `.\pyvenv\Scripts\activate.bat`
         `cd mdt`
@@ -18,6 +18,6 @@ Depends on folder mdt-flutter:
         )
         `flutter run`
 
-#FIXME:
-##Fix delay arrested
-##fix update
+# FIXME:
+- Fix delay arrested
+- fix update

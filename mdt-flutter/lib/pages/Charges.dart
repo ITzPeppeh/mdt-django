@@ -34,30 +34,7 @@ class _ChargesState extends State<Charges> {
                 margin: const EdgeInsets.all(5),
                 color: colorBox,
                 child: Column(
-                  children: [/*
-                    TextField(
-                      style: const TextStyle(color: textColor),
-                      decoration: const InputDecoration(
-                          labelStyle: TextStyle(color: textColor),
-                          labelText: 'Search',
-                          prefixIcon: Icon(Icons.search)),
-                      onChanged: (textValue) {
-                        List results = [];
-                        if (textValue.isEmpty) {
-                          results = listCharges;
-                        } else {
-                          results = listCharges
-                              .where((element) => element.chargeName
-                                  .toLowerCase()
-                                  .contains(textValue.toLowerCase()))
-                              .toList();
-                        }
-
-                        setState(() {
-                          _foundCharges = results;
-                        });
-                      },
-                    ),*/
+                  children: [
                     FutureBuilder(
                       future: _foundCharges,
                       builder: (context, AsyncSnapshot snapshot) {

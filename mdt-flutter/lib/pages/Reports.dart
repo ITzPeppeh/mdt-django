@@ -15,10 +15,10 @@ List _crimWidgetList = [];
 
 class _ReportsState extends State<Reports> {
   refresh() async {
-    if (ReportsTexts.textReportID == '') return;
     setState(() {
       _crimWidgetList.clear();
     });
+    if (ReportsTexts.textReportID == '') return;
 
     int id = int.parse(ReportsTexts.textReportID);
 
@@ -96,30 +96,6 @@ class _ReportsState extends State<Reports> {
                   )
                 ],
               ),
-              /*
-              TextField(
-                style: const TextStyle(color: textColor),
-                decoration: const InputDecoration(
-                    labelStyle: TextStyle(color: textColor),
-                    labelText: 'Search',
-                    suffixIcon: Icon(Icons.search)),
-                onChanged: (textValue) {
-                  List results = [];
-                  if (textValue.isEmpty) {
-                    results = MyDatabase.listReports;
-                  } else {
-                    results = MyDatabase.listReports
-                        .where((element) => element.reportName
-                            .toLowerCase()
-                            .contains(textValue.toLowerCase()))
-                        .toList();
-                  }
-
-                  setState(() {
-                    _foundReports = results;
-                  });
-                },
-              ),*/
               FutureBuilder<List<Report>>(
                   future: futureReports,
                   builder: (context, AsyncSnapshot snapshot) {
@@ -173,13 +149,13 @@ class _ReportsState extends State<Reports> {
                     highlightColor: Colors.transparent,
                   ),
                   IconButton(
-                    onPressed: () {
-                      setState(() {
-                        MyDB().deleteReportFromId(int.parse(
+                    onPressed: () async {
+                        await MyDB().deleteReportFromId(int.parse(
                             ReportsTexts.textReportID == ''
                                 ? '-1'
                                 : ReportsTexts.textReportID));
                         futureReports = MyDB().getReports();
+                      setState(() {
                         ReportsTexts.clearAll();
                         _crimWidgetList.clear();
                       });
@@ -190,10 +166,9 @@ class _ReportsState extends State<Reports> {
                     highlightColor: Colors.transparent,
                   ),
                   IconButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (ReportsTexts.textReportTitle == '') return;
-                      setState(() {
-                        MyDB().addOrUpdateReport(Report(
+                        await MyDB().addOrUpdateReport(Report(
                             repId: int.parse(ReportsTexts.textReportID == ''
                                 ? '-1'
                                 : ReportsTexts.textReportID),
@@ -202,6 +177,7 @@ class _ReportsState extends State<Reports> {
                             detailsReport: ReportsTexts.textDetails));
 
                         futureReports = MyDB().getReports();
+                      setState(() {
                         ReportsTexts.clearAll();
                         _crimWidgetList.clear();
                       });

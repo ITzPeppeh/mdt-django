@@ -11,8 +11,9 @@ class Profiles extends StatefulWidget {
   State<Profiles> createState() => _ProfilesState();
 }
 
+List _crimWidgetList = [];
+
 class _ProfilesState extends State<Profiles> {
-  List _crimWidgetList = [];
 
   refresh() async {
     setState(() {
@@ -27,6 +28,9 @@ class _ProfilesState extends State<Profiles> {
           title:
               "Appears in report ID: ${element.idReport}"));
     }
+    setState(() {
+      
+    });
   }
 
   TextEditingController _stateIdTextFieldController = TextEditingController();
@@ -119,14 +123,14 @@ class _ProfilesState extends State<Profiles> {
                       highlightColor: Colors.transparent,
                     ),
                     IconButton(
-                      onPressed: () {
-                        setState(() {
-                          MyDB().deleteUserFromId(int.parse(
+                      onPressed: () async {
+                          await MyDB().deleteUserFromId(int.parse(
                               _stateIdTextFieldController.text == ''
                                   ? '-1'
                                   : _stateIdTextFieldController.text));
                           futureUsers = MyDB().getCivilians();
 
+                        setState(() {
                           _crimWidgetList = [];
                           ProfilesTexts.clearAll();
                         });
@@ -137,10 +141,9 @@ class _ProfilesState extends State<Profiles> {
                       highlightColor: Colors.transparent,
                     ),
                     IconButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (_stateIdTextFieldController.text == '') return;
-                        setState(() {
-                          MyDB().addOrUpdateUser(Civilian(
+                          await MyDB().addOrUpdateUser(Civilian(
                               id: int.parse(
                                   _stateIdTextFieldController.text == ''
                                       ? '-1'
@@ -152,6 +155,7 @@ class _ProfilesState extends State<Profiles> {
                                   _detailsTextFieldController.text));
                           futureUsers = MyDB().getCivilians();
 
+                        setState(() {
                           _crimWidgetList = [];
                           ProfilesTexts.clearAll();
                         });

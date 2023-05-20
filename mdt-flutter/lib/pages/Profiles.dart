@@ -14,20 +14,19 @@ class Profiles extends StatefulWidget {
 class _ProfilesState extends State<Profiles> {
   List _crimWidgetList = [];
 
-  refresh() {
+  refresh() async {
     setState(() {
-      _crimWidgetList = [];
-      if (ProfilesTexts.textProfileID == '') return;
-
-      int id = int.parse(ProfilesTexts.textProfileID);
-      for (var i = 0; i < MyDatabase.listCrimReports.length; i++) {
-        if (MyDatabase.listCrimReports[i].idCiv == id) {
-          _crimWidgetList.add(TabProfile(
-              title:
-                  "Appears in report ID: ${MyDatabase.listCrimReports[i].idReport}"));
-        }
-      }
+      _crimWidgetList.clear();
     });
+    if (ProfilesTexts.textProfileID == '') return;
+
+    int id = int.parse(ProfilesTexts.textProfileID);
+
+    for (var element in await MyDB().getReportsFromCivId(id)) {
+      _crimWidgetList.add(TabProfile(
+          title:
+              "Appears in report ID: ${element.idReport}"));
+    }
   }
 
   TextEditingController _stateIdTextFieldController = TextEditingController();

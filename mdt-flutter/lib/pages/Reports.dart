@@ -11,53 +11,48 @@ class Reports extends StatefulWidget {
   State<Reports> createState() => _ReportsState();
 }
 
+List _crimWidgetList = [];
+
 class _ReportsState extends State<Reports> {
-  late List _crimWidgetList = [];
-
   refresh() async {
-      _crimWidgetList = [];
-      if (ReportsTexts.textReportID == '') return;
+    if (ReportsTexts.textReportID == '') return;
+    setState(() {
+      _crimWidgetList.clear();
+    });
 
-      int id = int.parse(ReportsTexts.textReportID);
+    int id = int.parse(ReportsTexts.textReportID);
 
-      for (var element in await MyDB().getCrimsFromRepId(id)) {
-        _crimWidgetList.add(ReportProfile(
-            notifyParent: addToReport,
-            stateID: element.idCiv.toString(),
-            isWarrant : element.isWarrant));
-      }
-    
+    for (var element in await MyDB().getCrimsFromRepId(id)) {
+      _crimWidgetList.add(ReportProfile(
+          notifyParent: addToReport,
+          stateID: element.idCiv.toString(),
+          isWarrant: element.isWarrant));
+    }
+
     setState(() {});
   }
 
-  addToReport(bool deleteReport, List lol) { //FROM HERE
+  addToReport(bool deleteReport, List lol) async {
     if (!deleteReport) {
       if (ReportsTexts.textReportID == '') return;
       if (lol[0] == '') return;
-      print(lol[1]);
-      MyDatabase.listCrimReports.add(Arrested(
+
+      await MyDB().addOrUpdateArrested(Arrested(
           idReport: int.parse(ReportsTexts.textReportID),
           idCiv: int.parse(lol[0]),
           isWarrant: lol[1]));
-      
-      MyDatabase.listUsers.forEach((element) {
-        print('---');
-        print(element.id);
-        print(lol[1]);
-        print('--');
-         if(element.id == int.parse(lol[0]) && element.isWarant != lol[1]) {
-          print('dentro');
-        element.isWarant = lol[1];}});
+
       setState(() {
         ReportsTexts.clearAll();
-        /*TODO: DELETE ONLY HIS WIDGET(?)*/
         _crimWidgetList.clear();
       });
     } else {
       if (ReportsTexts.textReportID == '') return;
 
-      MyDatabase.listCrimReports.removeWhere((element) =>
-          element.idReport.toString() == ReportsTexts.textReportID);
+      await MyDB().deleteArrested(Arrested(
+          idReport: int.parse(ReportsTexts.textReportID),
+          idCiv: int.parse(lol[0]),
+          isWarrant: lol[1]));
 
       setState(() {
         ReportsTexts.clearAll();
@@ -74,10 +69,10 @@ class _ReportsState extends State<Reports> {
   @override
   void initState() {
     futureReports = MyDB().getReports();
-    
+
     super.initState();
   }
-  
+
   late Future<List<Report>> futureReports;
 
   @override
@@ -100,7 +95,8 @@ class _ReportsState extends State<Reports> {
                     ),
                   )
                 ],
-              ),/*
+              ),
+              /*
               TextField(
                 style: const TextStyle(color: textColor),
                 decoration: const InputDecoration(
@@ -125,8 +121,8 @@ class _ReportsState extends State<Reports> {
                 },
               ),*/
               FutureBuilder<List<Report>>(
-                future: futureReports,
-                builder: (context, AsyncSnapshot snapshot) {
+                  future: futureReports,
+                  builder: (context, AsyncSnapshot snapshot) {
                     if (snapshot.hasData) {
                       return ListView.builder(
                         shrinkWrap: true,
@@ -145,8 +141,7 @@ class _ReportsState extends State<Reports> {
                       Text("ERROR: ${snapshot.error}");
                     }
                     return const CircularProgressIndicator();
-                  }
-              )
+                  })
             ]),
           ),
         ),
@@ -186,6 +181,7 @@ class _ReportsState extends State<Reports> {
                                 : ReportsTexts.textReportID));
                         futureReports = MyDB().getReports();
                         ReportsTexts.clearAll();
+                        _crimWidgetList.clear();
                       });
                     },
                     icon: const Icon(Icons.delete),
@@ -204,9 +200,10 @@ class _ReportsState extends State<Reports> {
                             reportName: ReportsTexts.textReportTitle,
                             dateCreated: DateTime.now(),
                             detailsReport: ReportsTexts.textDetails));
-                        
+
                         futureReports = MyDB().getReports();
                         ReportsTexts.clearAll();
+                        _crimWidgetList.clear();
                       });
                     },
                     icon: const Icon(Icons.save),
@@ -271,8 +268,12 @@ class _ReportsState extends State<Reports> {
                   IconButton(
                     onPressed: () {
                       setState(() {
+                        if (ReportsTexts.textReportID == "") return;
                         _crimWidgetList.add(ReportProfile(
-                            notifyParent: addToReport, stateID: '', isWarrant: false,));
+                          notifyParent: addToReport,
+                          stateID: '',
+                          isWarrant: false,
+                        ));
                       });
                     },
                     icon: const Icon(Icons.add),
@@ -286,8 +287,7 @@ class _ReportsState extends State<Reports> {
                 shrinkWrap: true,
                 itemCount: _crimWidgetList.length,
                 itemBuilder: (context, index) {
-                  return _crimWidgetList[
-                      index];
+                  return _crimWidgetList[index];
                 },
               ),
             ]),

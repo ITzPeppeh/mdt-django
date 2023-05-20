@@ -127,7 +127,7 @@ class _ReportProfileState extends State<ReportProfile> {
                   IconButton(
                     onPressed: () {
                       widget.notifyParent(
-                          true, [_stateIDTextFieldController.text]);
+                          true, [_stateIDTextFieldController.text, isWarrantA]);
                     },
                     icon: const Icon(Icons.delete),
                     color: textColor,

@@ -3,7 +3,6 @@ import 'package:mdt/models/constants.dart';
 import 'package:mdt/models/database.dart';
 import 'package:mdt/models/sidebar.dart';
 import 'package:mdt/models/warrantbox.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,18 +12,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final _myDB = Hive.box(dbName);
-  MyDatabase db = MyDatabase();
 
   @override
   void initState() {
-    if (_myDB.get(tableUsersName) == null) {
-      db.createInitialData();
-    } else {
-      db.loadData();
-    }
+    futureWarrants = MyDB().getWarrants();
     super.initState();
   }
+  
+  late Future<List<Civilian>> futureWarrants;
 
   @override
   Widget build(BuildContext context) {
@@ -60,17 +55,27 @@ class _HomePageState extends State<HomePage> {
                   ),
               ],
             ),
-            ListView.builder(
-              shrinkWrap: true,
-              itemCount: MyDatabase.getWarrants().length,
-              itemBuilder: (context, index) {
-                List data = MyDatabase.getWarrants();
-                return WarrantBox(
-                    civID: data[index]['id'],
-                    civName: data[index]['fullName'],
-                    civImage: data[index]['imageURL']);
+            FutureBuilder<List<Civilian>>(
+              future: futureWarrants,
+              builder: (context, AsyncSnapshot snapshot) {
+                if (snapshot.hasData) {
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (context, index) {
+                          List data = snapshot.data!;
+                          return WarrantBox(
+                              civID: data[index].id,
+                              civName: data[index].fullName,
+                              civImage: data[index].imageProfileURL);
+                        },
+                      );
+                    } else if (snapshot.hasError) {
+                      Text("ERROR: ${snapshot.error}");
+                    }
+                    return const CircularProgressIndicator();
               },
-            ),
+            )
           ]),
         )),
         Expanded(
@@ -79,9 +84,9 @@ class _HomePageState extends State<HomePage> {
             width: 150,
             color: colorBox,
             margin: const EdgeInsets.all(6),
-            child: Column(children: [
+            child: const Column(children: [
               Row(
-                children: const [
+                children: [
                   Padding(
                     padding: EdgeInsets.all(8.0),
                     child: Text(
@@ -91,7 +96,7 @@ class _HomePageState extends State<HomePage> {
                   )
                 ],
               ),
-              const Padding(
+              Padding(
                 padding: EdgeInsets.all(8.0),
                 child: TextField(
                   decoration:

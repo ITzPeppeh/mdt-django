@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mdt/pages/Charges.dart';
 import 'package:mdt/pages/Profiles.dart';
 import 'package:mdt/pages/Reports.dart';
 import 'package:mdt/models/constants.dart';
 import 'package:mdt/pages/Homepage.dart';
 
-void main() async{
-  await Hive.initFlutter();
-  var box = await Hive.openBox(dbName);
-
+void main() {
 
   runApp(MaterialApp(
       debugShowCheckedModeBanner: false,

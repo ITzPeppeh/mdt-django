@@ -24,13 +24,10 @@ class _ProfilesState extends State<Profiles> {
     int id = int.parse(ProfilesTexts.textProfileID);
 
     for (var element in await MyDB().getReportsFromCivId(id)) {
-      _crimWidgetList.add(TabProfile(
-          title:
-              "Appears in report ID: ${element.idReport}"));
+      _crimWidgetList
+          .add(TabProfile(title: "Appears in report ID: ${element.idReport}"));
     }
-    setState(() {
-      
-    });
+    setState(() {});
   }
 
   TextEditingController _stateIdTextFieldController = TextEditingController();
@@ -124,11 +121,11 @@ class _ProfilesState extends State<Profiles> {
                     ),
                     IconButton(
                       onPressed: () async {
-                          await MyDB().deleteUserFromId(int.parse(
-                              _stateIdTextFieldController.text == ''
-                                  ? '-1'
-                                  : _stateIdTextFieldController.text));
-                          futureUsers = MyDB().getCivilians();
+                        await MyDB().deleteUserFromId(int.parse(
+                            _stateIdTextFieldController.text == ''
+                                ? '-1'
+                                : _stateIdTextFieldController.text));
+                        futureUsers = MyDB().getCivilians();
 
                         setState(() {
                           _crimWidgetList = [];
@@ -143,17 +140,14 @@ class _ProfilesState extends State<Profiles> {
                     IconButton(
                       onPressed: () async {
                         if (_stateIdTextFieldController.text == '') return;
-                          await MyDB().addOrUpdateUser(Civilian(
-                              id: int.parse(
-                                  _stateIdTextFieldController.text == ''
-                                      ? '-1'
-                                      : _stateIdTextFieldController.text),
-                              fullName: _fullNameTextFieldController.text,
-                              imageProfileURL:
-                                  _imageURLTextFieldController.text,
-                              detailsProfile:
-                                  _detailsTextFieldController.text));
-                          futureUsers = MyDB().getCivilians();
+                        await MyDB().addOrUpdateUser(Civilian(
+                            id: int.parse(_stateIdTextFieldController.text == ''
+                                ? '-1'
+                                : _stateIdTextFieldController.text),
+                            fullName: _fullNameTextFieldController.text,
+                            imageProfileURL: _imageURLTextFieldController.text,
+                            detailsProfile: _detailsTextFieldController.text));
+                        futureUsers = MyDB().getCivilians();
 
                         setState(() {
                           _crimWidgetList = [];

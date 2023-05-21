@@ -9,6 +9,9 @@ Depends on folder mdt-flutter:
     1:
         `.\pyvenv\Scripts\activate.bat`
         `cd mdt`
+        (
+            `pip install -r requirements.txt`
+        )
         `python manage.py runserver`
     2:
         `cd mdt-flutter`
